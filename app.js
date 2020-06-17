@@ -4,6 +4,9 @@ const morgan = require("morgan"); // api logger as midleware
 const checkFileRouter = require("./routes/checkFileRoute")
 const app = express();
 
+const bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({ extended: false }));
+
 // requests funneled through morgan logger before going to the routers 
 app.use(morgan("dev"))
 
