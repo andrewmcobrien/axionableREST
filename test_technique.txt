@@ -1,0 +1,16 @@
+Ecrire une application web simple en utilisant le framework de votre choix qui permet de valider le type du fichier uploadé depuis le navigateur.
+
+1. Création d’un formulaire HTML permettant l’upload d’une image
+    . Créer un bouton «select file» pour sélectionner un fichier en local
+    . Créer un second bouton «submit» pour soumettre le fichier
+
+2. Création d’une API REST qui écoutera en local sur le port 8080 des requêtes HTTP, elle devra:
+    . Accepter la méthode POST correspondant à l’upload de l’image
+    . Verifier l’extension du fichier uploadé
+    . renvoyer « file successfuly uploaded » si et seulement si le fichier est une image au format tiff ou jpeg, 
+sinon «file type not supported » 
+ 
+3. Tester avec un fichier supporté et un fichier non supporté votre application
+
+
+Envoyer le code source par mail à la personne qui débriefera avec vous par la suite.
