@@ -5,13 +5,14 @@ exports.checkFile = async(req, res, next) => {
 
     try {
         console.log('the beginning of the POST REQUEST !')
-            // here we would put the logic for checking the file extension !!
+        res.status(200).json({ message: "File succesfully uploaded !" });
 
-        console.log(req)
+        // here we could put the logic for checking the file extension !!
 
 
 
-        // just in case we want to catch error in the future 
+
+        // if we want to catch an error for wrong file extension
     } catch (err) {
         if (err.message == '') {
             console.error(err);
