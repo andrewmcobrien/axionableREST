@@ -2,14 +2,21 @@ const express = require("express");
 const mongoose = require("mongoose");
 const morgan = require("morgan"); // api logger as midleware
 const checkFileRouter = require("./routes/checkFileRoute")
-const app = express();
 const bodyParser = require('body-parser')
+const GridFsStorage = require('multer-gridfs-storage')
+const Grid = require('gridfs-stream')
+const methodOverride = require('method-override')
+
+const app = express();
+
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // requests funneled through morgan logger before going to the routers 
 app.use(morgan("dev"))
 
+
 // mongoDB connection - so we can track/store the images (limited db capacity)
+let gfs;
 mongoose.connect(process.env.DB_URL_WITHOUT_USER_PASS, {
     auth: {
         user: process.env.MONGOUSR,
@@ -17,15 +24,22 @@ mongoose.connect(process.env.DB_URL_WITHOUT_USER_PASS, {
     },
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then(
-    () => {
-        console.log("Database connected");
-    },
-    err => {
-        // Initial connection error handling
-        console.log("Error in database connection. ", err);
-    }
-);
+});
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+    console.log("connected to mongo")
+    gfs = Grid(db, mongoose.mongo);
+    gfs.collection('uploads')
+    console.log("GFS set");
+});
+
+
+
+
+
+
 
 // Allowing cross origin (adding to header)
 app.use((req, res, next) => {
