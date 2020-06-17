@@ -2,6 +2,7 @@
     "env": {
         "DB_URL_WITHOUT_USER_PASS": "mongodb+srv://phoneDBUser:<password>@basecluster-tx9mi.azure.mongodb.net/<dbname>?retryWrites=true&w=majority",
         "MONGOUSR": "phoneDBUser",
-        "MONGOPSSWD": "rtX5%-098kn$lorry"
+        "MONGOPSSWD": "rtX5%-098kn$lorry",
+        "DB_URL": "mongodb+srv://phoneDBUser:rtX5%-098kn$lorry@basecluster-tx9mi.azure.mongodb.net/phoneDB?retryWrites=true&w=majority"
     }
 }

@@ -1,5 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const multer = require('multer');
+const path = require('path');
+const crypto = require('crypto');
 const morgan = require("morgan"); // api logger as midleware
 const checkFileRouter = require("./routes/checkFileRoute")
 const bodyParser = require('body-parser')
@@ -9,11 +12,11 @@ const methodOverride = require('method-override')
 
 const app = express();
 
-app.use(bodyParser.urlencoded({ extended: false }));
-
-// requests funneled through morgan logger before going to the routers 
+// middleware
 app.use(morgan("dev"))
-
+app.use(methodOverride('_method'));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.set('view engine', 'ejs');
 
 // mongoDB connection - so we can track/store the images (limited db capacity)
 let gfs;
@@ -31,13 +34,31 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
     console.log("connected to mongo")
     gfs = Grid(db, mongoose.mongo);
-    gfs.collection('uploads')
+    gfs.collection('checkFile')
     console.log("GFS set");
 });
 
 
-
-
+// Create storage engine
+const storage = new GridFsStorage({
+    db: db,
+    file: (req, file) => {
+        return new Promise((resolve, reject) => {
+            crypto.randomBytes(16, (err, buf) => {
+                if (err) {
+                    return reject(err);
+                }
+                const filename = buf.toString('hex') + path.extname(file.originalname);
+                const fileInfo = {
+                    filename: filename,
+                    bucketName: 'checkFile'
+                };
+                resolve(fileInfo);
+            });
+        });
+    }
+});
+const upload = multer({ storage });
 
 
 
@@ -59,14 +80,13 @@ app.use((req, res, next) => {
 });
 
 
-// Serve the views with EJS  - set basic view engine
-app.set('view engine', 'ejs');
+// Serve the views with EJS 
 app.get('/', (req, res) => {
     res.render('index');
 });
 
 //--- Different routes 
-app.post('/checkFile', checkFileRouter)
+app.post('/checkFile', upload.single('fileToUpload'), checkFileRouter)
     //---
 
 
