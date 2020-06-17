@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const morgan = require("morgan"); // api logger as midleware
 const checkFileRouter = require("./routes/checkFileRoute")
 const app = express();
-
 const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -46,8 +45,11 @@ app.use((req, res, next) => {
 });
 
 
-//--- Serve Static Files
-app.use(express.static('./public'))
+// Serve the views with EJS  - set basic view engine
+app.set('view engine', 'ejs');
+app.get('/', (req, res) => {
+    res.render('index');
+});
 
 //--- Different routes 
 app.post('/checkFile', checkFileRouter)
@@ -57,7 +59,7 @@ app.post('/checkFile', checkFileRouter)
 
 // error Handling: catches all request that make it past app Routes
 app.use((req, res, next) => {
-    const error = new Error("Not Found !!");
+    const error = new Error("Not Found");
     error.status = 404;
     next(error);
 });
