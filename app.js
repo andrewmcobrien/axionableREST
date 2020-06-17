@@ -1,5 +1,5 @@
 const express = require("express");
-//const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const morgan = require("morgan"); // api logger as midleware
 const checkFileRouter = require("./routes/checkFileRoute")
 const app = express();
@@ -9,6 +9,24 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // requests funneled through morgan logger before going to the routers 
 app.use(morgan("dev"))
+
+// mongoDB connection - so we can track/store the images (limited db capacity)
+mongoose.connect(process.env.DB_URL_WITHOUT_USER_PASS, {
+    auth: {
+        user: process.env.MONGOUSR,
+        password: process.env.MONGOPSSWD
+    },
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(
+    () => {
+        console.log("Database connected");
+    },
+    err => {
+        // Initial connection error handling
+        console.log("Error in database connection. ", err);
+    }
+);
 
 // Allowing cross origin (adding to header)
 app.use((req, res, next) => {
